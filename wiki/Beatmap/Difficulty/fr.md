@@ -13,6 +13,8 @@ tags:
 
 # Difficulté
 
+<!-- some fake edit -->
+
 *À ne pas confondre avec [Beatmap](/wiki/Beatmap).*
 
 La **difficulté** d'une beatmap est un niveau de jeu, qui est stocké dans un fichier texte avec [l'extension `.osu`](/wiki/osu!_File_Formats/Osu_(file_format)). Il est composé d'[objets](/wiki/Hit_object) d'un certain [mode de jeu](/wiki/Game_mode), qui sont configurés en fonction du [timing](/wiki/Beatmapping/Timing_section) adapté à une musique spécifique. Les difficultés présentent différents aspects, qui affectent directement l'expérience de l'utilisateur. Le nom de la difficulté et le [classement en étoiles](/wiki/Beatmapping/Star_rating) donnent généralement suffisamment d'informations pour déterminer le niveau de difficulté.
