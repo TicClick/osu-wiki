@@ -5,6 +5,8 @@ tags:
   - mapas
   - beatmapa
 no_native_review: true
+outdated: true
+outdated_since: cdd4fb4de167f91f1a96884fd150a39336d94632
 ---
 
 # Beatmap
