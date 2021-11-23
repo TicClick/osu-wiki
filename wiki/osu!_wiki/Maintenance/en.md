@@ -1,5 +1,7 @@
 # osu! wiki maintenance
 
+<!-- test if ! from the article's name is not lost in shell pipelines when escaped -->
+
 *See also: [osu! wiki contribution guide](/wiki/osu!_wiki/Contribution_guide)*
 
 This article describes technical or administrative aspects of the osu! wiki. It also covers maintenance procedures, which are required to keep it fresh—perhaps you may [help with one of them](#routines). For all discussions related to the wiki, use the `#osu-wiki` channel of the [osu!dev Discord server](/wiki/osu!dev_Discord_server).
