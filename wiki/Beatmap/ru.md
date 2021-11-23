@@ -5,6 +5,8 @@ tags:
   - мапа
   - мапсет
   - битмапа
+outdated: true
+outdated_since: 5f491d0f3caeada5204b5d6354200ebc29456821
 ---
 
 # Карта
