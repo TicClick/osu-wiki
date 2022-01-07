@@ -4,7 +4,7 @@ set -e -u -o pipefail
 tags_regexp='---\n(.*\n)*?((outdated: |outdated_since: ).+\n)(.*\n)*?---'
 pull_request_tag='SKIP_OUTDATED_CHECK'
 
-function prompt_help () { say "Usage: "$0" -h"; }
+function prompt_help () { say "Usage: "${0}" -h"; }
 function print_usage () {
     say "List translations that need to be outdated,
     based on the original articles that were edited between two commits.
@@ -21,10 +21,10 @@ Parameters:
 function diff_files () { git diff --diff-filter=d --name-only "$1" "$2" "${@:2}"; }
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit
-function echo_red () { say "\e[0;31m$1\e[m"; }
-function echo_green () { say "\e[0;32m$1\e[m"; }
+function echo_red () { say "\e[0;31m${1}\e[m"; }
+function echo_green () { say "\e[0;32m${1}\e[m"; }
 
-function say () { echo -e "$*"; }
+function say () { echo -e "${*}"; }
 
 function main () {
     declare commit_from=''
@@ -62,7 +62,7 @@ function main () {
                 fi
                 if [[ -e "$article_name" ]] && ! [[ "$translations" =~ $article_name ]]; then
                     # print only names of non-matching files, with multiline match (considering \n)
-                    grep -ELz -e "$tags_regexp" "$article_name" || true
+                    grep -LzP -e "$tags_regexp" "$article_name" || true
                 fi
             done
         done
