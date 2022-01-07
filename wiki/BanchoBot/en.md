@@ -11,6 +11,8 @@ tags:
 
 # BanchoBot
 
+test
+
 *For other uses, see [Bancho (disambiguation)](/wiki/Disambiguation/Bancho).*
 
 ![BanchoBot's user card](img/BanchoBot.jpg "BanchoBot's user card")
