@@ -6,6 +6,8 @@ tags:
   - osu!supporter tag
 ---
 
+<!-- TEST -->
+
 # osu!supporter
 
 **osu!supporter** (or the ***osu!supporter tag***) is a temporary title given to players who support osu! by making a voluntary, monetary donation to help it thrive. Supporters receive a handful of cosmetic and technical benefits, most of which are active only when the title is present. The extra features from osu!supporter do not give any advantage in gameplay, performance, or score, and never will.

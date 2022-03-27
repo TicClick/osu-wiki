@@ -1,5 +1,7 @@
 # Legal
 
+<!-- TEST -->
+
 Index page for all of the legal articles. Their links can also be found in the footer of the osu! website.
 
 - [osu! copyright policy](Copyright)
