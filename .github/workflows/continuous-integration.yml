@@ -69,9 +69,11 @@ jobs:
           exit ${EXIT}
 
       - name: setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
-      - name: install remark
+      - name: install node dependencies
         run: npm install
 
       - name: run remark on changed files
