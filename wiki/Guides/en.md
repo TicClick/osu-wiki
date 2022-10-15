@@ -3,6 +3,7 @@
 Below is a sorted list of guides created by members of the osu! community, most of which originated from the osu! forums and have been ported over to the osu! wiki.
 
 ## Beatmapping
+##### Please don't tap on the glass
 
 *Main page: [Beatmapping](/wiki/Beatmapping)*
 
