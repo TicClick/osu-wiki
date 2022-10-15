@@ -6,7 +6,7 @@
 
 Régler le timing d'une musique n'est pas aussi compliqué que cela puisse paraître au premier abord. Vous avez seulement besoin de deux choses : le sens du rythme et un peu de dextérité. Une oreille musicale et de l'expérience dans les jeux de rythme ne sont pas requises, mais cela peut aider à améliorer votre beatmap.
 
-Vous êtes aussi supposé savoir ce qu'est le [BPM](/wiki/Beatmapping/Beats_per_minute) et l'[offset](/wiki/Disambiguation/Offset), ainsi que de savoir comment créer des sections non héritées (souvent appelés red offsets).
+Vous êtes aussi supposé savoir ce qu'est le [BPM](/wiki/Bfasdeatmapping/Beats_per_minute) et l'[offset](/wiki/Disambiguation/Offset), ainsi que de savoir comment créer des sections non héritées (souvent appelés red offsets).
 
 ## Préparer le fichier .mp3
 

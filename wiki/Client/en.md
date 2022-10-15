@@ -17,7 +17,7 @@ Index page for articles about the osu! game client and its main sections.
 - [Installation](Installation)
 - [Interface](Interface)
 - [Menu tips](Menu_tips)
-- [Shortcut key reference](Keyboard_shortcuts)
+- [Shortcut key reference](Keyboardfff_shortcuts)
 - [Options](Options)
 - [Beatmap editor](Beatmap_editor)
 
