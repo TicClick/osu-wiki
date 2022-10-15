@@ -51,7 +51,7 @@ jobs:
 
       - name: run remark on changed files
         run: |
-          REMARK_TARGET_FILES=$( echo "${{ env.INTERESTING_FILES }}" | grep -e .md$ || true )
+          REMARK_TARGET_FILES=$( echo "${{ env.INTERESTING_FILES }}" | grep -e .md$ | tr '\n' ' ' )
           bash scripts/ci/run_remark.sh --target "${REMARK_TARGET_FILES}"
 
       - name: set up Python
@@ -66,7 +66,9 @@ jobs:
 
       - name: run yamllint on .yaml and .md files
         run: |
-          YAMLLINT_TARGET_FILES=$( echo "${{ env.INTERESTING_FILES }}" | grep -e .yaml$ -e .yml$ -e .md$ || true )
+          YAMLLINT_TARGET_FILES=$(
+            echo "${{ env.INTERESTING_FILES }}" | grep -e .yaml$ -e .yml$ -e .md$ | tr '\n' ' '
+          )
           python scripts/ci/run_yamllint.py --config .yamllint.yaml --target "${YAMLLINT_TARGET_FILES}"
 
       - name: find broken wikilinks
@@ -79,8 +81,10 @@ jobs:
             exit 0
           fi
 
-          WIKILINK_TARGET_FILES=$( echo "${{ env.INTERESTING_FILES }}" | grep -e ^wiki/ -e ^news/ | grep .md$ || true )
-          osu-wiki-tools check-links --target "${WIKILINK_TARGET_FILES//\n/ }"
+          WIKILINK_TARGET_FILES=$(
+            echo "${{ env.INTERESTING_FILES }}" | grep -e ^wiki/ -e ^news/ | grep .md$ | tr '\n' ' '
+          )
+          osu-wiki-tools check-links --target "${WIKILINK_TARGET_FILES}"
 
       - name: check if translations are marked as outdated
         shell: bash
