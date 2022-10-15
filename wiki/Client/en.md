@@ -2,6 +2,9 @@
 stub: true
 tags:
   - game client
+tags:
+  - test
+  - not
 ---
 
 # Client

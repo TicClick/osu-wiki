@@ -4,6 +4,7 @@ tags:
   - Infrastruktur
 outdated_translation: true
 outdated_since: bf2bda082372e609b197acae5aafd6d022ab16bf
+outdated_translation: false
 ---
 
 # Bancho (Spielserver)

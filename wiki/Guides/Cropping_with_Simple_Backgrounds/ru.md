@@ -1,5 +1,8 @@
 ---
 no_native_review: true
+tags: false
+tags:
+  - test
 ---
 
 # Как удалить простой фон на картинке
