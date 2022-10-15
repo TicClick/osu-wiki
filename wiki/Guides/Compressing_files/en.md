@@ -9,6 +9,8 @@ There are 2 types of compression. **Lossy** and **Lossless** compression.
 
 ## Video
 
+break outdated check
+
 Videos are usually where people go wrong. There are thousands of video codecs out there, and *believe it or not, YouTube is usually a terrible place to get videos*.
 
 H.264 is a good codec to use but like most video codecs, it is lossy. This means you want to avoid re-encoding the video multiple times, but instead encode from the high resolution source once.

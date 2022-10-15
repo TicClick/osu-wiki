@@ -13,6 +13,8 @@ By default, a lot of players will start out with the mouse, since it's often the
 - Touch Screen
 - Keyboard Clicking
 
+break outdated check
+
 There are other ways you can control the cursor (Wiimote, motion sensor, etc.) but for the purpose of the guide, we will focus on the four bulleted points.
 
 ### Mouse Play

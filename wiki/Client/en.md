@@ -8,6 +8,8 @@ tags:
 
 <!-- TODO: this could make for a good introductory page -->
 
+break outdated check
+
 Index page for articles about the osu! game client and its main sections.
 
 ## Introduction
