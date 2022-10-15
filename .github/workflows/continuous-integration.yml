@@ -80,7 +80,7 @@ jobs:
           fi
 
           WIKILINK_TARGET_FILES=$( echo "${{ env.INTERESTING_FILES }}" | grep -e ^wiki/ -e ^news/ | grep .md$ || true )
-          osu-wiki-tools check-links --target "${WIKILINK_TARGET_FILES//\\\n/ }"
+          osu-wiki-tools check-links --target "${WIKILINK_TARGET_FILES//\n/ }"
 
       - name: check if translations are marked as outdated
         shell: bash
