@@ -6,9 +6,10 @@ tags:
 ---
 
 # Client (test)
+# BREAK STUFFS
 
 Indexseite für Artikel über den Spiel-Client von osu! und seine Hauptabschnitte.
-
+<!-- oh no-->
 ## Übersicht
 
 - [Installation](Installation)
