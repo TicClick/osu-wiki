@@ -44,6 +44,7 @@ jobs:
           bash scripts/ci/inspect_file_sizes.sh --target "${TARGET_FILES[@]}"
 
       - name: set up Node.js
+        id: setup-node
         uses: actions/setup-node@v3
         with:
           cache: npm
@@ -54,7 +55,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
+          key: node-modules-${{ hashFiles('package-lock.json') }}-${{ steps.setup-node.outputs.node-version }}
 
       - name: install remark
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
