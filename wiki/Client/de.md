@@ -5,7 +5,7 @@ tags:
   - Spiel-Client
 ---
 
-# Client
+# Client (test)
 
 Indexseite für Artikel über den Spiel-Client von osu! und seine Hauptabschnitte.
 
