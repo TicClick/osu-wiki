@@ -27,7 +27,6 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v3
         with:
-          cache: npm
           node-version: 16
 
       - name: load node_modules from cache
