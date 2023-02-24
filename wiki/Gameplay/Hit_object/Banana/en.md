@@ -8,4 +8,6 @@ stub: true
 
 Successfully catching a banana will increase the [score](/wiki/Gameplay/Score) with 1100 points without taking [combo](/wiki/Gameplay/Combo_(score_multiplier)) into account, and they also provide a boost to the [health bar](/wiki/Client/Interface/Health_bar).
 
+<!-- maybe bananas should be pears instead -->
+
 <!-- TODO: Add images -->
