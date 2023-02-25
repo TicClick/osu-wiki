@@ -5,6 +5,8 @@
 
 ## Locales
 
+<!-- test -->
+
 Listed below are the properly-supported locales for the wiki:
 
 | File Name | Locale Name | Native Script |
