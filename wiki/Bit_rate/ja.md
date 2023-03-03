@@ -11,4 +11,4 @@ stub: true
 
 オーディオファイルのビットレートは、通常、96kbps(キロビット/秒)から320kbpsの範囲です。[ランキング基準](/wiki/Ranking_Criteria)では、曲のオーディオが128～192kbpsの範囲であることを要求しており、[AiMod](/wiki/Client/Beatmap_editor/AiMod)では、これに該当しない場合は警告を出します。
 
-<!-- test but in Japanese -->
+<!-- test (but in Japanese) -->
