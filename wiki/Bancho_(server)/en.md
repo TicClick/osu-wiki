@@ -24,3 +24,5 @@ During maintenance periods, Bancho is sometimes restarted. This is relayed to al
 ## References
 
 [^score-upload-ref]: [Tweet by @osustatus (2019-07-30)](https://twitter.com/osustatus/status/1156092746685243392)
+
+<!-- trigger updates -->
