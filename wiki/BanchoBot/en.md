@@ -8,7 +8,7 @@ tags:
 
 <!--TODO:
 - add section that lists and explains all the game-related announcements
-  test -->
+  test 2 -->
 
 # BanchoBot
 
