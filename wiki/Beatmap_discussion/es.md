@@ -5,6 +5,8 @@ tags:
   - MV2
   - discusiones de beatmaps
 outdated: true
+outdated_translation: true
+outdated_since: d7e9f2cbcca63d94d34815738b0f61c2f7868e23
 ---
 
 # Discusión de beatmaps
