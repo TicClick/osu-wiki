@@ -22,7 +22,7 @@ tags:
 - Beatmap status
 - Modding tabs
 - Submission field
-- Discussions
+- Discussionsts
 
 You can follow along with our images from [this beatmap](https://osu.ppy.sh/beatmapsets/924551/discussion) to get familiar with beatmap discussions or try opening a discussion page yourself!
 
