@@ -16,6 +16,8 @@ tags:
 
 *Catatan: Sebagian fitur bawaan beatmap dapat dinonaktifkan melalui menu [Visual Settings](/wiki/Client/Interface/Visual_settings).*
 
+test
+
 ## Tingkat kesulitan
 
 *Artikel utama: [Tingkat kesulitan](/wiki/Beatmap/Difficulty)*
