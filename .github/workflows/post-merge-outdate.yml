@@ -54,7 +54,7 @@ jobs:
               main()
           EOF
           
-          exclude_args=$( python parse_rules.py )
+          exclude_args="$( python parse_rules.py )"
           echo "exclude_args=$exclude_args" >> $GITHUB_OUTPUT
 
       - name: Set up Python CI dependencies
