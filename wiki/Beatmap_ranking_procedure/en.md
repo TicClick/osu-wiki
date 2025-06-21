@@ -11,7 +11,7 @@ tags:
 # Beatmap ranking procedure
 
 *See also: [Rank (disambiguation)](/wiki/Disambiguation/Rank)*
-
+f
 [Beatmaps](/wiki/Beatmap) can be promoted to the community by following the beatmap ranking procedure and entering the [Ranked](/wiki/Beatmap/Category#ranked) category.
 
 ## Feedback
