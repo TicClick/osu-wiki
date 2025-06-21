@@ -6,20 +6,29 @@ on:
       - master
     paths:
       - '**.md'
-  pull_request:
-    types: [closed]
-    branches: [master]
 
 jobs:
   process-outdated-files:
     name: Process outdated files after merge
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true || (github.event_name == 'push' && !contains(github.event.head_commit.message, 'Merge pull request'))
 
     permissions:
       contents: write
     
     steps:
+      - name: Read pull request data
+        uses: actions/github-script@v6
+        id: read-pr-data
+        with:
+          script: |
+              return (
+                await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                  commit_sha: context.sha,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                })
+              ).data[0];
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -33,9 +42,9 @@ jobs:
 
       - name: Read DO_NOT_OUTDATE rules
         id: read-rules
-        if: github.event.pull_request.merged == true
+        if: ${{ steps.read-pr-data.outputs.result }}
         env:
-          MAYBE_PULL_REQUEST_BODY: ${{ github.event.pull_request.body || '' }}
+          PULL_REQUEST_BODY: ${{ steps.read-pr-data.outputs.result && fromJson(steps.read-pr-data.outputs.result).body }}
         run: |
           cat > parse_rules.py << 'EOF'
           import os
@@ -45,7 +54,7 @@ jobs:
           DO_NOT_OUTDATE_RE = re.compile("DO_NOT_OUTDATE:\s*(.+?)(?=\n|$)")
 
           def main():
-              body = os.environ["MAYBE_PULL_REQUEST_BODY"]
+              body = os.environ["PULL_REQUEST_BODY"]
               for match in DO_NOT_OUTDATE_RE.findall(body):
                   for split in match.split(","):
                       print("--exclude={}".format(split.strip()))
@@ -55,7 +64,7 @@ jobs:
           EOF
 
           exclude_args="$( python parse_rules.py )"
-          if [ -n $exclude_args ]; then
+          if [ -n "$exclude_args" ]; then
               echo 'exclude_args<<EOF' >> $GITHUB_OUTPUT
               echo "$exclude_args" >> $GITHUB_OUTPUT
               echo 'EOF' >> $GITHUB_OUTPUT
@@ -68,7 +77,7 @@ jobs:
 
       - name: Run osu-wiki-tools with excludes
         env:
-          TRIGGER_REFERENCE: ${{ (github.event.pull_request.number && format('pull request {#}{0}', github.event.pull_request.number)) || format('commit {0}', github.sha) }}
+            PULL_REQUEST_NUMBER: ${{ steps.read-pr-data.outputs.result && fromJson(steps.read-pr-data.outputs.result).number }}
         run: |
           exclude_args="${{ steps.read-rules.outputs.exclude_args }}"
           osu-wiki-tools check-outdated-articles \
@@ -77,9 +86,15 @@ jobs:
               --outdated-since ${{ github.sha }} \
               $exclude_args
 
+          if [ -n "$PULL_REQUEST_NUMBER" ]; then
+            action_trigger="pull request #${PULL_REQUEST_NUMBER}"
+          else
+            action_trigger="commit ${{ github.sha }}"
+          fi
+
           git config --global user.name "github-actions[bot]" && \
               git config --global user.email "github-actions[bot]@users.noreply.github.com" && \
-              git commit -a -m "Mark translations as outdated after ${{ env.TRIGGER_REFERENCE }}" && \
+              git commit -a -m "Mark translations as outdated after $action_trigger" && \
               git push
 
       - name: Create summary
