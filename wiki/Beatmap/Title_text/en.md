@@ -6,6 +6,8 @@ tags:
 
 # Beatmap title text
 
+test
+
 <!-- This article was based off of [*Changing the Title Text : The Guide* by: Ekaru](https://osu.ppy.sh/community/forums/topics/14513), but a lot of the content has been changed/updated, so I'm just leaving the link here as a reference. It's not worth linking to from the wiki because it contains incorrect info at some points -->
 
 ![Screenshot of osu! gameplay with title text visible](img/liquid-title-text.jpg "The title text for \"Rostik - Liquid (Paul Rosenthal Remix)\" shows just after starting the map.")
