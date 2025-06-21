@@ -4,11 +4,17 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**.md'
+  pull_request_target:
+    types: [closed]
+    branches: [master]
 
 jobs:
   process-outdated-files:
     name: Process outdated files after merge
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true || (github.event_name == 'push' && !contains(github.event.head_commit.message, 'Merge pull request'))
 
     permissions:
       contents: write
@@ -18,63 +24,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files and parse DO_NOT_OUTDATE rules
-        id: parse-files
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { execSync } = require('child_process');
-            
-            const headSha = "${{ github.sha }}";
-            const baseSha = `${headSha}~1`;
-            const diffOutput = execSync(`git diff --name-only ${baseSha} ${headSha}`, { encoding: 'utf-8' });
-            const changedFiles = diffOutput.trim().split('\n').filter(file => file.length > 0);
-            console.log(`Changed files (git diff ${baseSha} ${headSha}):`, changedFiles);
-            
-            const prBody = context.payload.pull_request?.body || '';
-            console.log('PR body:', prBody);
-            
-            function parseDoNotOutdateRules(prBody) {
-              if (!prBody) return [];
-              
-              if (/DO_NOT_OUTDATE\s*$/m.test(prBody)) {
-                return ['*'];
-              }
-              
-              const rules = [];
-              const matches = prBody.match(/DO_NOT_OUTDATE:\s*(.+?)(?=\n|$)/gm);
-              if (matches) {
-                for (const match of matches) {
-                  const content = match.replace(/DO_NOT_OUTDATE:\s*/, '');
-                  const patterns = content.split(',').map(p => p.trim());
-                  rules.push(...patterns);
-                }
-              }
-              
-              return rules;
-            }
-            
-            const rules = parseDoNotOutdateRules(prBody);
-            console.log('DO_NOT_OUTDATE rules:', rules);
-            
-            let excludeArgs = [];
-            let shouldSkipAll = false;
-            
-            if (rules.includes('*')) {
-              shouldSkipAll = true;
-              console.log('Skipping all files due to DO_NOT_OUTDATE without specific files');
-            } else {
-              excludeArgs = rules.map(rule => `--exclude="${rule}"`);
-            }
-            
-            const excludeArgsStr = excludeArgs.join(' ');
-            console.log('--exclude arguments for osu-wiki-tools:', excludeArgsStr);
-            
-            core.setOutput('changed_files', changedFiles.join('\n'));
-            core.setOutput('exclude_args', excludeArgsStr);
-            core.setOutput('should_skip_all', shouldSkipAll.toString());
-            core.setOutput('exclude_rules', rules.join('\n'));
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -82,58 +31,59 @@ jobs:
           cache-dependency-path: requirements.txt
           python-version: "3.11"
 
+      - name: Read DO_NOT_OUTDATE rules
+        id: read-rules
+        if: github.event.pull_request.merged == true
+        env:
+          MAYBE_PULL_REQUEST_BODY: ${{ github.event.pull_request.body || '' }}
+        run: |
+          cat > parse_rules.py << 'EOF'
+          import os
+          import re
+          import sys
+
+          DO_NOT_OUTDATE_RE = re.compile("DO_NOT_OUTDATE:\s*(.+?)(?=\n|$)")
+
+          def main():
+              body = os.environ["MAYBE_PULL_REQUEST_BODY"]
+              for match in DO_NOT_OUTDATE_RE.findall(body):
+                  for split in match.split(","):
+                      print("--exclude={}".format(split.strip()))
+
+          if __name__ == "__main__":
+              main()
+          EOF
+          
+          exclude_args=$( python parse_rules.py )
+          echo "exclude_args=$exclude_args" >> $GITHUB_OUTPUT
+
       - name: Set up Python CI dependencies
         run: pip install git+https://github.com/TicClick/osu-wiki-tools.git@exclude-outdated-paths
 
       - name: Run osu-wiki-tools with excludes
-        if: steps.parse-files.outputs.should_skip_all != 'true'
+        env:
+          TRIGGER_REFERENCE: ${{ (github.event.pull_request.number && format('pull request \#{0}', github.event.pull_request.number)) || format('commit {0}', github.sha) }}
         run: |
-          exclude_args="${{ steps.parse-files.outputs.exclude_args }}"
-          
-          echo "Running osu-wiki-tools check-outdated-articles --autofix --autocommit $exclude_args"
-          
-          if [ -n "$exclude_args" ]; then
-            osu-wiki-tools check-outdated-articles --autofix --autocommit --base-commit "${{ github.sha }}~1" --outdated-since ${{ github.sha }} $exclude_args
-          else
-            osu-wiki-tools check-outdated-articles --autofix --autocommit --base-commit "${{ github.sha }}~1" --outdated-since ${{ github.sha }} 
-          fi
+          exclude_args="${{ steps.read-rules.outputs.exclude_args }}"
+          osu-wiki-tools check-outdated-articles \
+              --autofix \
+              --base-commit "${{ github.sha }}~1" \
+              --outdated-since ${{ github.sha }} \
+              $exclude_args
 
-      - name: Commit and push changes
-        if: steps.parse-files.outputs.should_skip_all != 'true'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: |
-            Mark translations as outdated after PR #${{ github.event.pull_request.number }} merge
-            
-            Auto-generated by post-merge workflow
-          branch: master
-          commit_user_name: 'github-actions[bot]'
-          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
+          git config --global user.name "github-actions[bot]" && \
+              git config --global user.email "github-actions[bot]@users.noreply.github.com" && \
+              git commit -a -m "Mark translations as outdated after ${{ env.TRIGGER_REFERENCE }}" && \
+              git push
 
       - name: Create summary
         run: |
-          echo "## Post-merge processing completed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**PR Number:** ${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ steps.parse-rules.outputs.should_skip_all }}" = "true" ]; then
-            echo "**Status:** All files skipped due to DO_NOT_OUTDATE rule" >> $GITHUB_STEP_SUMMARY
+          exclude_rules="${{ steps.read-rules.outputs.exclude_args }}"
+          if [ -n "$exclude_args" ]; then
+            echo "**Exclude rules applied:**" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$exclude_rules" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           else
-            exclude_rules="${{ steps.parse-rules.outputs.exclude_rules }}"
-            if [ -n "$exclude_rules" ]; then
-              echo "**Exclude rules applied:**" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              echo "$exclude_rules" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-            else
-              echo "**Status:** No exclude rules found, processed all changed files" >> $GITHUB_STEP_SUMMARY
-            fi
+            echo "**Status:** No exclude rules found, processed all changed files" >> $GITHUB_STEP_SUMMARY
           fi
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Changed files:**" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.get-changed-files.outputs.changed_files }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
