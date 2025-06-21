@@ -20,7 +20,7 @@ La **discusión de beatmaps** (también conocida como *Modding v2*) es un sistem
 - Línea de tiempo visual
 - Estado del beatmap
 - Pestañas de modding
-- Campo de envío
+- Campo de envíoff
 - Discusiones
 
 ¡Puedes seguir nuestras imágenes de [este beatmap](https://osu.ppy.sh/beatmapsets/924551/discussion) para familiarizarte con las discusiones de beatmaps o intentar abrir una página de discusión tú mismo!
