@@ -40,51 +40,44 @@ jobs:
           cache-dependency-path: requirements.txt
           python-version: "3.11"
 
-      - name: Read DO_NOT_OUTDATE rules
-        id: read-rules
-        if: ${{ steps.read-pr-data.outputs.result }}
-        env:
-          PULL_REQUEST_BODY: ${{ steps.read-pr-data.outputs.result && fromJson(steps.read-pr-data.outputs.result).body }}
-        run: |
-          cat > parse_rules.py << 'EOF'
-          import os
-          import re
-          import sys
-
-          DO_NOT_OUTDATE_RE = re.compile("DO_NOT_OUTDATE:\s*(.+?)(?=\n|$)")
-
-          def main():
-              body = os.environ["PULL_REQUEST_BODY"]
-              for match in DO_NOT_OUTDATE_RE.findall(body):
-                  for split in match.split(","):
-                      print("--exclude={}".format(split.strip()))
-
-          if __name__ == "__main__":
-              main()
-          EOF
-
-          exclude_args="$( python parse_rules.py )"
-          if [ -n "$exclude_args" ]; then
-              echo 'exclude_args<<EOF' >> $GITHUB_OUTPUT
-              echo "$exclude_args" >> $GITHUB_OUTPUT
-              echo 'EOF' >> $GITHUB_OUTPUT
-          else
-              echo "exclude_args=" >> $GITHUB_OUTPUT
-          fi
-
       - name: Set up Python CI dependencies
         run: pip install git+https://github.com/TicClick/osu-wiki-tools.git@exclude-outdated-paths
 
-      - name: Run osu-wiki-tools with excludes
+      - name: Process outdated articles
+        id: process-articles
         env:
-            PULL_REQUEST_NUMBER: ${{ steps.read-pr-data.outputs.result && fromJson(steps.read-pr-data.outputs.result).number }}
+          PULL_REQUEST_BODY: ${{ steps.read-pr-data.outputs.result && fromJson(steps.read-pr-data.outputs.result).body }}
+          PULL_REQUEST_NUMBER: ${{ steps.read-pr-data.outputs.result && fromJson(steps.read-pr-data.outputs.result).number }}
         run: |
-          exclude_args="${{ steps.read-rules.outputs.exclude_args }}"
+          exclude_args=()
+          exclude_list=""
+          
+          if [ -n "$PULL_REQUEST_BODY" ]; then
+            while IFS= read -r line; do
+              if [[ "$line" =~ DO_NOT_OUTDATE:[[:space:]]*(.+) ]]; then
+                IFS=',' read -ra items <<< "${BASH_REMATCH[1]}"
+                for item in "${items[@]}"; do
+                  item_clean=$( echo "$item" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' )
+                  exclude_args+=( "--exclude=${item_clean}" )
+                  exclude_list="${exclude_list}--exclude=${item_clean}"$'\n'
+                done
+              fi
+            done <<< "$PULL_REQUEST_BODY"
+          fi
+
+          if [ -n "$exclude_list" ]; then
+              echo 'exclude_list<<EOF' >> $GITHUB_OUTPUT
+              echo "$exclude_list" >> $GITHUB_OUTPUT
+              echo 'EOF' >> $GITHUB_OUTPUT
+          else
+              echo "exclude_list=" >> $GITHUB_OUTPUT
+          fi
+
           osu-wiki-tools check-outdated-articles \
               --autofix \
               --base-commit "${{ github.sha }}~1" \
               --outdated-since ${{ github.sha }} \
-              $exclude_args
+              "${exclude_args[@]}"
 
           if [ -n "$PULL_REQUEST_NUMBER" ]; then
             action_trigger="pull request #${PULL_REQUEST_NUMBER}"
@@ -99,8 +92,8 @@ jobs:
 
       - name: Create summary
         run: |
-          exclude_rules="${{ steps.read-rules.outputs.exclude_args }}"
-          if [ -n "$exclude_args" ]; then
+          exclude_rules="${{ steps.process-articles.outputs.exclude_list }}"
+          if [ -n "$exclude_rules" ]; then
             echo "**Exclude rules applied:**" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "$exclude_rules" >> $GITHUB_STEP_SUMMARY
