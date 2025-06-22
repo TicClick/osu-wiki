@@ -3,7 +3,7 @@ stub: true
 ---
 
 # Bit rate
-
+asdf
 *For regulations surrounding bit rate, see: [Ranking criteria](/wiki/Ranking_criteria)*\
 *For help re-encoding audio to a different bit rate, see: [Audio editing guide](/wiki/Guides/Audio_editing).*
 
