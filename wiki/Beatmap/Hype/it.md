@@ -2,6 +2,8 @@
 stub: true
 tags:
   - train
+outdated_translation: true
+outdated_since: 4559e4a54b5c5fe76dfb41652b74b6d9d2cca80b
 ---
 
 # Hype

@@ -5,6 +5,8 @@ tags:
   - passive drain rate
   - 掉血速度
   - 被动掉血速度
+outdated_translation: true
+outdated_since: 4559e4a54b5c5fe76dfb41652b74b6d9d2cca80b
 ---
 
 # 掉血速度 (HP drain rate)

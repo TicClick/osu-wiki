@@ -3,6 +3,8 @@ stub: true
 tags:
   - health drain rate
   - passive drain rate
+outdated_translation: true
+outdated_since: 4559e4a54b5c5fe76dfb41652b74b6d9d2cca80b
 ---
 
 # Perdita HP
