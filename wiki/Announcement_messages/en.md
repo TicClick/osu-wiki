@@ -7,6 +7,8 @@ tags:
 
 # Announcement messages
 
+<!-- -->
+
 ![Announcement notification](img/notification.png "An announcement message notification")
 
 An **announcement message** is a special type of message that's intended for sending longer and formatted messages to multiple users at once. The key differences between announcement messages and regular chat messages are:
