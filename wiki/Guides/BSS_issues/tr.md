@@ -2,6 +2,8 @@
 tags:
   - I can't submit my own beatmap!
   - beatmap submission system issues
+outdated_translation: true
+outdated_since: 31178b32be1d682ea9c2d4cdad127b0c2c06b619
 ---
 
 # BSS sorunları nasıl çözümlenir

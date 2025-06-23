@@ -3,6 +3,8 @@ tags:
   - tidak bisa submit map
   - tidak bisa upload map
   - masalah sistem submisi beatmap
+outdated_translation: true
+outdated_since: 31178b32be1d682ea9c2d4cdad127b0c2c06b619
 ---
 
 # Bagaimana mengatasi masalah pada BSS
