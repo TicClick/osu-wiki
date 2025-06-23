@@ -6,6 +6,8 @@ tags:
   - duyuru
   - duyuru grubu
   - duyuru kullanıcı grubu
+outdated_translation: true
+outdated_since: 03f596f20d5c690c0628ee62551c07265d7b7c19
 ---
 
 # Duyuru mesajları
