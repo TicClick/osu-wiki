@@ -8,6 +8,8 @@ This article serves as guide to help you do minor edits to your audio files for 
 
 ## Audacity
 
+<!-- -->
+
 *Note: This article uses Audacity 3.4.2.*
 
 [Audacity](https://www.audacityteam.org/download) is a free, open-source audio editing and recording software. It uses the [LAME](https://lame.sourceforge.io) encoding library to be able to export audio in the MP3 audio format and is built into Audacity on Windows and macOS.
