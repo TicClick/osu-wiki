@@ -6,6 +6,8 @@ This guide will help you get your beatmap under that limit and meet such require
 
 ## Introduction
 
+<!-- -->
+
 There are 2 types of compression, **lossless** and **lossy**:
 
 - **Lossless** compression implies that the quality never degrades and can thus be repeatedly compressed and decompressed
