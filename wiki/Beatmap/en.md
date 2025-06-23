@@ -6,6 +6,8 @@ tags:
 
 # Beatmap
 
+<!-- -->
+
 A **beatmap** (sometimes called *beatmapset*) is a set of game levels ([difficulties](#difficulty)) that are composed of various [hit objects](/wiki/Gameplay/Hit_object) and almost always represent a single song. It also includes other components, all packed in an archive with [the `.osz` extension](/wiki/Client/File_formats/osz_(file_format)):
 
 - the song itself, stored in MP3 or Ogg format.
