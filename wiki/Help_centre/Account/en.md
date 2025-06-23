@@ -18,6 +18,8 @@ tags:
 
 # Account
 
+<!-- -->
+
 *Main page: [Help centre](/wiki/Help_centre)*
 
 Everything related to your osu! account. Read below to find out if there's a suitable solution to your issue.

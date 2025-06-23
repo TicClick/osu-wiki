@@ -7,6 +7,8 @@ tags:
 
 # HP drain rate
 
+<!-- -->
+
 *For health as a gameplay mechanic, see: [Health](/wiki/Gameplay/Health)*\
 *For regulations surrounding HP drain rate, see: [Ranking criteria](/wiki/Ranking_criteria)*
 
