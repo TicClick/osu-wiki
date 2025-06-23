@@ -5,6 +5,8 @@ tags:
 
 # Combo fire
 
+<!-- -->
+
 ::: Infobox
 ![](img/combo-fire.jpg "Yellow, orange, and red combo fire (below 500 combo)")
 :::

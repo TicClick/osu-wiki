@@ -1,5 +1,7 @@
 # First medal unlocks
 
+<!-- -->
+
 This is a compendium of the first users to unlock each medal in osu! history.
 
 ## Beatmap Challenge Packs
