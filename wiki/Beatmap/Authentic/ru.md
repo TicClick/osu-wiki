@@ -22,6 +22,8 @@ tags:
   - карты iNiS
   - оригинальная игра
   - оригинальные игры
+outdated_translation: true
+outdated_since: 24e2a80a4af3657aa7a92a30ef457b0e3376a3d6
 ---
 
 # Аутентичная карта
