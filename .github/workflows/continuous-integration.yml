@@ -20,7 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ fromJson(steps.calc.outputs.result).shouldRun }}
-      changed_files: ${{ fromJson(steps.calc.outputs.result).changedFiles }}
     steps:
       - name: calculate PR changes
         id: calc
@@ -30,9 +29,8 @@ jobs:
             const { owner, repo } = context.repo;
             const pr = context.payload.pull_request;
             const action = context.payload.action;
-            const result = { shouldRun: 'false', changedFiles: JSON.stringify([]) };
 
-            if (!pr) return result;
+            if (!pr) return { shouldRun: 'false' };
 
             const FLAGS = ['SKIP_REMARK', 'SKIP_WIKILINK_CHECK'];
             let shouldRun = false;
@@ -48,21 +46,7 @@ jobs:
               }
             }
 
-            if (!shouldRun) return result;
-
-            const files = [];
-            const iter = github.paginate.iterator(github.rest.pulls.listFiles, {
-              owner, repo, pull_number: pr.number, per_page: 100,
-            });
-            for await (const resp of iter) {
-              for (const f of resp.data) {
-                if (f.status !== 'removed') files.push(f.filename);
-              }
-            }
-
-            result.shouldRun = 'true';
-            result.changedFiles = JSON.stringify(files);
-            return result;
+            return { shouldRun };
 
   ci:
     name: changed files
@@ -70,6 +54,9 @@ jobs:
     if: ${{ needs.check-should-ci.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
+      # Clone the repo and only fetch the commit that triggered the workflow (omitted default of `fetch-depth: 1`).
+      # To get the full list of changed files and avoid `fetch-depth: 0` (fetches the whole history) or GitHub API
+      # (returns <=3,000 changed files), we manually fetch `master` later.
       - uses: actions/checkout@v4
 
       - name: set up Node.js
@@ -96,15 +83,14 @@ jobs:
       - name: Install dependencies (Python)
         run: uv sync
 
-      - name: Detect changed files
+      - name: detect changed files
         id: detect-changed-files
         # Use NUL as a separator to prevent filenames containing spaces and punctuation marks from tripping up the scripts.
         run: |
-          CHANGED_FILES_PATH="$RUNNER_TEMP/changed_files"
-          jq -j '.[] + "\u0000"' <<<"$CHANGED_JSON" > "$CHANGED_FILES_PATH"
-          echo "CHANGED_FILES=$CHANGED_FILES_PATH" >> "$GITHUB_ENV"
-        env:
-          CHANGED_JSON: ${{ needs.check-should-ci.outputs.changed_files }}
+          changed_files="$(mktemp)"
+          git fetch --no-tags --depth=1 origin master
+          git diff --diff-filter=d --name-only --no-renames -z origin/master...HEAD > "$changed_files"
+          printf 'CHANGED_FILES=%s\n' "$changed_files" >>"$GITHUB_ENV"
 
       - name: check file sizes
         if: ${{ !cancelled() && steps.detect-changed-files.outcome == 'success' }}
