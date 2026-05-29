@@ -17,14 +17,19 @@ concurrency:
 jobs:
   ci:
     name: changed files
+    # When a PR is edited, don't re-run the CI if the edit won't affect the outcome.
+    if: >-
+      github.event.action != 'edited' ||
+      contains(github.event.changes.body.from, 'SKIP_REMARK')
+        != contains(github.event.pull_request.body, 'SKIP_REMARK') ||
+      contains(github.event.changes.body.from, 'SKIP_WIKILINK_CHECK')
+        != contains(github.event.pull_request.body, 'SKIP_WIKILINK_CHECK')
     runs-on: ubuntu-latest
     steps:
+      # Clone the repo and only fetch the commit that triggered the workflow (omitted default of `fetch-depth: 1`).
+      # To get the full list of changed files and avoid `fetch-depth: 0` (fetches the whole history) or GitHub API
+      # (returns <=3,000 changed files), we manually fetch `master` later.
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: create master branch from remote master
-        run: git branch master origin/master
 
       - name: set up Node.js
         id: setup-node
@@ -52,9 +57,11 @@ jobs:
 
       - name: detect changed files
         id: detect-changed-files
+        # Use NUL as a separator to prevent filenames containing spaces and punctuation marks from tripping up the scripts.
         run: |
           changed_files="$(mktemp)"
-          git diff --diff-filter=d --name-only --no-renames -z master >"$changed_files"
+          git fetch --no-tags --depth=1 origin master
+          git diff --diff-filter=d --name-only --no-renames -z origin/master HEAD > "$changed_files"
           printf 'CHANGED_FILES=%s\n' "$changed_files" >>"$GITHUB_ENV"
 
       - name: check file sizes
