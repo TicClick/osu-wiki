@@ -15,15 +15,56 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-should-ci:
+    name: Determine if CI should run
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      should_run_checks: ${{ steps.calc.outputs.should_run_checks }}
+    steps:
+      - name: Determine if CI should run
+        id: calc
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setOutput('should_run_checks', 'true');
+
+            const action = context.payload.action;
+            if (action != 'edited') {
+              return;
+            }
+
+            const FLAGS = ['SKIP_REMARK', 'SKIP_WIKILINK_CHECK'];
+            const oldBody = context.payload.changes?.body?.from || '';
+            const newBody = context.payload.pull_request?.body || '';
+            const hasChangedFlags = FLAGS.some(flag => oldBody.includes(flag) != newBody.includes(flag));
+            if (hasChangedFlags) {
+              return;
+            }
+
+            // Only previously successful checks must be skipped. It is possible for a check to fail due to
+            // infrastructure issues or the contents of the PR; in this case, it must run as per usual instead of
+            // masking the error.
+
+            const { owner, repo } = context.repo;
+            const { data: thisRun } = await github.rest.actions.getWorkflowRun({
+              owner, repo, run_id: context.runId,
+            });
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              owner, repo,
+              workflow_id: thisRun.workflow_id,
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'completed',
+            });
+            const previous = data.workflow_runs.find(run => run.id !== context.runId);
+            const isFailureOrUnknown = previous?.conclusion !== 'success';
+            core.setOutput('should_run_checks', String(isFailureOrUnknown));
+
   ci:
     name: changed files
-    # When a PR is edited, don't re-run the CI if the edit won't affect the outcome.
-    if: >-
-      github.event.action != 'edited' ||
-      contains(github.event.changes.body.from, 'SKIP_REMARK')
-        != contains(github.event.pull_request.body, 'SKIP_REMARK') ||
-      contains(github.event.changes.body.from, 'SKIP_WIKILINK_CHECK')
-        != contains(github.event.pull_request.body, 'SKIP_WIKILINK_CHECK')
+    needs: check-should-ci
+    if: ${{ needs.check-should-ci.outputs.should_run_checks == 'true'}}
     runs-on: ubuntu-latest
     steps:
       # Clone the repo and only fetch the commit that triggered the workflow (omitted default of `fetch-depth: 1`).
