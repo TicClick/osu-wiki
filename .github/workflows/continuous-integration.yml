@@ -28,10 +28,10 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            core.setOutput('should_run_checks', 'true');
-
             const action = context.payload.action;
             if (action != 'edited') {
+              core.setOutput('should_run_checks', 'true');
+              console.log('PR status or contents have changed => will run checks');
               return;
             }
 
@@ -40,6 +40,8 @@ jobs:
             const newBody = context.payload.pull_request?.body || '';
             const hasChangedFlags = FLAGS.some(flag => oldBody.includes(flag) != newBody.includes(flag));
             if (hasChangedFlags) {
+              console.log('PR flags have changed => will run checks');
+              core.setOutput('should_run_checks', 'true');
               return;
             }
 
@@ -57,7 +59,11 @@ jobs:
               head_sha: context.payload.pull_request.head.sha,
               status: 'completed',
             });
+            console.debug('Workflows previously run on the same commit: ' + toJSON(data.workflow_runs));
+
             const previous = data.workflow_runs.find(run => run.id !== context.runId);
+            console.info('Most recent run: ' + toJSON(previous));
+
             const isFailureOrUnknown = previous?.conclusion !== 'success';
             core.setOutput('should_run_checks', String(isFailureOrUnknown));
 
