@@ -61,7 +61,7 @@ jobs:
         run: |
           changed_files="$(mktemp)"
           git fetch --no-tags --depth=1 origin master
-          git diff --diff-filter=d --name-only --no-renames -z origin/master...HEAD > "$changed_files"
+          git diff --diff-filter=d --name-only --no-renames -z origin/master HEAD > "$changed_files"
           printf 'CHANGED_FILES=%s\n' "$changed_files" >>"$GITHUB_ENV"
 
       - name: check file sizes
