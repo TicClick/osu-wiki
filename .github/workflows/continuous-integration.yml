@@ -47,7 +47,7 @@ jobs:
 
             // Only previously successful checks must be skipped. It is possible for a check to fail due to
             // infrastructure issues or the contents of the PR; in this case, it must run as per usual instead of
-            // masking the error.
+            // masking the error even if the flags haven't changed.
 
             const { owner, repo } = context.repo;
             const { data: thisRun } = await github.rest.actions.getWorkflowRun({
@@ -59,10 +59,12 @@ jobs:
               head_sha: context.payload.pull_request.head.sha,
               status: 'completed',
             });
-            console.debug('Workflows previously run on the same commit: ' + JSON.stringify(data.workflow_runs));
 
             const previous = data.workflow_runs.find(run => run.id !== context.runId);
-            console.info('Most recent run: ' + JSON.stringify(previous));
+            console.info(
+              'Previous workflow run for this commit: ' + JSON.stringify(previous?.url) +
+                ', conclusion: ' + JSON.stringify(previous?.conclusion)
+            );
 
             const isFailureOrUnknown = previous?.conclusion !== 'success';
             core.setOutput('should_run_checks', String(isFailureOrUnknown));
