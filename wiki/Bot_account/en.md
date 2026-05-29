@@ -15,6 +15,8 @@ Bot accounts can only be created via an [application process](#creating-a-bot-ac
 
 ## Benefits of bot accounts
 
+_aha_
+
 The main difference between personal accounts and bot accounts is in the rate limits that apply to them when sending [chat](/wiki/Client/Interface/Chat_console) messages. Bot accounts have higher limits to allow their services to interact with more users without risk of having the account [silenced](/wiki/Silence):
 
 - Personal accounts can send 10 messages every 5 seconds
