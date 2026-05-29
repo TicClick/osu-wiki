@@ -15,43 +15,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check-should-ci:
-    name: determine if CI should run
-    runs-on: ubuntu-latest
-    outputs:
-      should_run: ${{ fromJson(steps.calc.outputs.result).shouldRun }}
-    steps:
-      - name: calculate PR changes
-        id: calc
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const pr = context.payload.pull_request;
-            const action = context.payload.action;
-
-            if (!pr) return { shouldRun: 'false' };
-
-            const FLAGS = ['SKIP_REMARK', 'SKIP_WIKILINK_CHECK'];
-            let shouldRun = false;
-
-            if (action === 'opened' || action === 'reopened' || action === 'synchronize') {
-              shouldRun = true;
-            } else if (action === 'edited') {
-              const bodyChange = context.payload.changes && context.payload.changes.body;
-              if (bodyChange) {
-                const oldBody = bodyChange.from || '';
-                const newBody = pr.body || '';
-                shouldRun = FLAGS.some(flag => oldBody.includes(flag) !== newBody.includes(flag));
-              }
-            }
-
-            return { shouldRun };
-
   ci:
     name: changed files
-    needs: check-should-ci
-    if: ${{ needs.check-should-ci.outputs.should_run == 'true' }}
+    # When a PR is edited, don't re-run the CI if the edit won't affect the outcome.
+    if: >-
+      github.event.action != 'edited' ||
+      contains(github.event.changes.body.from, 'SKIP_REMARK')
+        != contains(github.event.pull_request.body, 'SKIP_REMARK') ||
+      contains(github.event.changes.body.from, 'SKIP_WIKILINK_CHECK')
+        != contains(github.event.pull_request.body, 'SKIP_WIKILINK_CHECK')
     runs-on: ubuntu-latest
     steps:
       # Clone the repo and only fetch the commit that triggered the workflow (omitted default of `fetch-depth: 1`).
