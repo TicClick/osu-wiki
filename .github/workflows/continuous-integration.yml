@@ -59,10 +59,10 @@ jobs:
               head_sha: context.payload.pull_request.head.sha,
               status: 'completed',
             });
-            console.debug('Workflows previously run on the same commit: ' + toJSON(data.workflow_runs));
+            console.debug('Workflows previously run on the same commit: ' + JSON.stringify(data.workflow_runs));
 
             const previous = data.workflow_runs.find(run => run.id !== context.runId);
-            console.info('Most recent run: ' + toJSON(previous));
+            console.info('Most recent run: ' + JSON.stringify(previous));
 
             const isFailureOrUnknown = previous?.conclusion !== 'success';
             core.setOutput('should_run_checks', String(isFailureOrUnknown));
